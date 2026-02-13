@@ -108,3 +108,37 @@ function addEvents(){
 
 // The initialize neeeds to be called at the end here
 document.addEventListener('DOMContentLoaded', initialize);
+
+//Initializing functions, the second of which will be held up by the .then functions added later
+function initialize(){
+	loadData();
+	debugAjax();
+};
+
+//Creating a function to load the GeoJSON data to the console. The function is called in the initialize function so that it runs after everything loads.
+function loadData(){
+    fetch("data/MegaCities.geojson")
+		.then(function(response){
+			return response.json();
+		})
+		.then(function(myData){
+			console.log(myData);
+		})
+}
+// Since 'response' parameter was not consistent with the 'myData' variable used later in this function, I simply switched the parameter to 'myData'
+function debugCallback(myData){
+	document.querySelector("#mydiv").insertAdjacentHTML('beforeend', 'GeoJSON data: ' + JSON.stringify(myData))
+};
+
+function debugAjax(){
+	// Deleting the var myData declaration here, since it became unecessary with the addition of .then(debugCallback) below.
+	// The .geojson file was created from the csv file using geojson.io, which are both now stored in the data folder.
+	fetch("data/MegaCities.geojson")
+		.then(function(response){
+			// The response needed to be converted to json format. Corrected.
+			return response.json();
+		})
+		    // The extra document.querySelector was unecessary and confusing, along with trying to call the debugCallback function with response. Instead, I'm just telling it to start the debugCallback after. 
+			.then(debugCallback);
+	};
+// Deleted the document.querySelector at the end here because it would happen before the data was loaded, and given its already in the debugCallback function.
